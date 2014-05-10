@@ -88,7 +88,7 @@ while len(gridCells):
         gridCells.pop(0)
 
 
-
+conn.close()
 
 
 
