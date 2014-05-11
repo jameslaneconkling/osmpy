@@ -57,8 +57,25 @@ def featureCount(conn, table, geom, bbox):
     return count
 
 
-def splitBbox():
-    pass
+def splitBbox(bbox):
+
+    minx = bbox[4:-1].split(',')[0].split(' ')[0]
+    miny = bbox[4:-1].split(',')[0].split(' ')[1]
+    maxx = bbox[4:-1].split(',')[1].split(' ')[0]
+    maxy = bbox[4:-1].split(',')[1].split(' ')[1]
+
+    midx = minx + (maxx-minx)/2
+    midy = miny + (maxy-miny)/2
+
+    bbox1 = "BOX(? ?,? ?)", (minx,midy,midx,maxy)
+    bbox2 = "BOX(? ?,? ?)", (midx,midy,maxx,maxy)
+    bbox3 = "BOX(? ?,? ?)", (minx,miny,midx,midy)
+    bbox4 = "BOX(? ?,? ?)", (midx,miny,maxx,midy)
+
+    bbox = [bbox1,bbox2,bbox3,bbox4]
+
+    return bbox
+              
 
 def addToDB():
     pass
