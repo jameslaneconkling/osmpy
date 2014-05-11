@@ -43,14 +43,19 @@ def makeSquare(conn, table, geom):
     maxy = maxy + dy
 
     
-    bbox = [minx,miny,maxx,maxy]
+    bbox = "BOX(? ?,? ?)",(minx,miny,maxx,maxy)
 
     return bbox
 
     
 
-def featureCount():
-    pass
+def featureCount(conn, table, geom, bbox):
+    c = conn.cursor()
+    c.execute("SELECT SUM(st_npoints(st_intersection(?, ST_GeomFromText(?))) FROM ? WHERE ST_Intersects(?, ST_GeomFromText(?))", (geom, bbox,table)
+    row = c.fetchone()
+    count = row[1]
+    return count
+
 
 def splitBbox():
     pass
@@ -71,7 +76,7 @@ gridCells = [['1', bbox]]
 
 while len(gridCells):
     cell = gridCells[0]
-    fCount = featureCount(cell[1])
+    fCount = featureCount(conn,table, geom, cell[1])
 
     if fCount > threshold:
         bbox1, bbox2, bbox3, bbox4 = splitBbox(bbox)
@@ -95,36 +100,3 @@ conn.close()
 
 
 
-
-
-
-
-def splitCell (features, cellId='1', threshold):
-    newId = 1
-    cellcount = sum(ST_NPoints(features))
-
-    bbox = getBbox(features)
-
-    if (cellcount > threshold):
-        for i in range(1,5):
-            bbox /= 4
-            newCellId = cellId + '.' + i
-            splitCell(result, cellId = newCellId, threshold = threshold)
-    else:
-        # insert into table: select *, bboxId FROM feature
-
-        newId += 1
-
-
-
-
-
-
-while cellCount > threshold:
-
-
-dx = ['1','2','3','4']
-
-first = dx.pop(0)
-
-dx = [first + '.1', first + '.2', first + '.3', first + '.4'] + dx
